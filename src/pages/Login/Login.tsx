@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useApp } from "../../store/app";
 import { useNavigate } from "react-router-dom";
+import { palette } from "../../theme/palette";
 
 type FormData = {
   id: number;
@@ -18,7 +19,7 @@ const schema = z.object({
 });
 
 const Login = () => {
-  const { setApp } = useApp();
+  const { app, setApp } = useApp();
   const navigate = useNavigate();
 
   const {
@@ -60,7 +61,8 @@ const Login = () => {
           }}
         >
           <Typography variant="h4">Вход в чат</Typography>
-          <form
+          <Box
+            component={"form"}
             onSubmit={handleSubmit(submitData)}
             style={{
               width: "100%",
@@ -75,7 +77,7 @@ const Login = () => {
               helperText={errors.id?.message}
               fullWidth
               label="Ваш ID"
-              type="text"
+              type="number"
             />
             <TextField
               {...register("token")}
@@ -93,10 +95,10 @@ const Login = () => {
               label="Номер телефона WhatsApp собеседника"
               type="number"
             />
-            <Button fullWidth variant="contained" color="primary" type="submit">
+            <Button fullWidth variant="contained" type="submit" color="primary">
               Войти
             </Button>
-          </form>
+          </Box>
         </Box>
       </Container>
     </Container>
