@@ -26,7 +26,7 @@ const Chat = () => {
   const timeoutRef = useRef<any>(null);
   const [sendMessage, { isLoading: isSending }] = useSendMessageMutation();
   const [deleteFromQueue] = useDeleteFromQueueMutation();
-  const { data, refetch } = useGetMessagesQuery(
+  const { refetch } = useGetMessagesQuery(
     {
       id: app.id,
       token: app.token,
