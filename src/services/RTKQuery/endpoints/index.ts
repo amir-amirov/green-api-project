@@ -24,6 +24,18 @@ export const extendedApi = baseApi.injectEndpoints({
       }),
       //   invalidatesTags: ["messages"],
     }),
+    setSetting: builder.mutation<any, any>({
+      query: ({ id, token }) => ({
+        url: `/waInstance${id}/setSettings/${token}`,
+        method: "POST",
+        data: {
+          webhookUrl: "",
+          outgoingWebhook: "yes",
+          stateWebhook: "yes",
+          incomingWebhook: "yes",
+        },
+      }),
+    }),
   }),
 });
 
@@ -31,4 +43,5 @@ export const {
   useGetMessagesQuery,
   useSendMessageMutation,
   useDeleteFromQueueMutation,
+  useSetSettingMutation,
 } = extendedApi;

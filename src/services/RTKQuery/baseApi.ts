@@ -6,6 +6,6 @@ export const baseApi = createApi({
   baseQuery: axiosBaseQuery(),
   refetchOnReconnect: true,
   // refetchOnFocus: true,
-  tagTypes: ["messages"],
+  tagTypes: ["messages", "settings"],
   endpoints: () => ({}),
 });

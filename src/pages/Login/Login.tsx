@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useApp } from "../../store/app";
 import { useNavigate } from "react-router-dom";
 import { palette } from "../../theme/palette";
+import { useSetSettingMutation } from "../../services/RTKQuery/endpoints";
 
 type FormData = {
   id: number;
@@ -22,6 +23,8 @@ const Login = () => {
   const { app, setApp } = useApp();
   const navigate = useNavigate();
 
+  const [setSettings, { isLoading }] = useSetSettingMutation();
+
   const {
     register,
     handleSubmit,
@@ -31,11 +34,27 @@ const Login = () => {
     resolver: zodResolver(schema),
   });
 
-  const submitData = (data: FormData) => {
-    console.log(data);
-    setApp(data);
-    reset();
-    navigate("/chat");
+  const submitData = async (data: FormData) => {
+    console.log("You typed: ", data);
+    console.log("Trying to configure settings...");
+    const { id, token } = data;
+
+    try {
+      const response = await setSettings({ id, token }).unwrap();
+
+      console.log("Response: ", response);
+
+      if (response.saveSettings) {
+        console.log("Configured settings successfully");
+        setApp(data);
+        reset();
+        navigate("/chat");
+      } else {
+        console.log("Failed to configure settings, try again");
+      }
+    } catch (err) {
+      console.error("Error: ", err);
+    }
   };
   return (
     <Container
@@ -95,7 +114,13 @@ const Login = () => {
               label="Номер телефона WhatsApp собеседника"
               type="number"
             />
-            <Button fullWidth variant="contained" type="submit" color="primary">
+            <Button
+              disabled={isLoading}
+              fullWidth
+              variant="contained"
+              type="submit"
+              color="primary"
+            >
               Войти
             </Button>
           </Box>

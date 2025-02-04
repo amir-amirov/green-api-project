@@ -609,7 +609,7 @@ import {
   useGetMessagesQuery,
   useSendMessageMutation,
 } from "../../services/RTKQuery/endpoints";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useApp } from "../../store/app";
 import { useNavigate } from "react-router-dom";
 import background from "../../assets/images/background.png";
@@ -627,114 +627,17 @@ interface Message {
 
 const Chat = () => {
   const { app, removeApp } = useApp();
-  const [messages, setMessages] = useState<Message[]>([
-    // {
-    //   message: "Hello World!",
-    //   fromMe: false,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Hi maaan!",
-    //   fromMe: true,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Howdy!",
-    //   fromMe: false,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Cooool man!",
-    //   fromMe: false,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Hate fucking coding!",
-    //   fromMe: true,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Hello World!",
-    //   fromMe: false,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Hi maaan!",
-    //   fromMe: true,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Howdy!",
-    //   fromMe: false,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Cooool man!",
-    //   fromMe: false,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Hate fucking coding!",
-    //   fromMe: true,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Hello World!",
-    //   fromMe: false,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Hi maaan!",
-    //   fromMe: true,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Howdy!",
-    //   fromMe: false,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Cooool man!",
-    //   fromMe: false,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Hate fucking coding!",
-    //   fromMe: true,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Hello World!",
-    //   fromMe: false,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Hi maaan!",
-    //   fromMe: true,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Howdy!",
-    //   fromMe: false,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Cooool man!",
-    //   fromMe: false,
-    //   time: 1738504129,
-    // },
-    // {
-    //   message: "Hate fucking coding!",
-    //   fromMe: true,
-    //   time: 1738504129,
-    // },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const timeoutRef = useRef<any>(null);
   const [sendMessage, { isLoading: isSending }] = useSendMessageMutation();
   const [deleteFromQueue] = useDeleteFromQueueMutation();
-  const { data, refetch } = useGetMessagesQuery({
-    id: app.id,
-    token: app.token,
-  });
+  const { data, refetch } = useGetMessagesQuery(
+    {
+      id: app.id,
+      token: app.token,
+    },
+    { skip: !app.id || !app.token }
+  );
   const [text, setText] = useState<string>("");
   const navigate = useNavigate();
 
@@ -765,6 +668,7 @@ const Chat = () => {
   };
 
   const fetchNotifications = async () => {
+    if (!app.id) return;
     try {
       console.log("Fetching...");
       const { data: newData } = await refetch(); // Wait for refetch to complete and get the updated data
@@ -792,7 +696,10 @@ const Chat = () => {
     } catch (err) {
       console.error("Error fetching / deleting notifications:", err);
     } finally {
-      setTimeout(fetchNotifications, 1000);
+      // setTimeout(fetchNotifications, 1000);
+      if (app.id) {
+        timeoutRef.current = setTimeout(fetchNotifications, 1000);
+      }
     }
   };
 
@@ -803,7 +710,15 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    fetchNotifications();
+    if (app.id) {
+      fetchNotifications();
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, []);
 
   return (
