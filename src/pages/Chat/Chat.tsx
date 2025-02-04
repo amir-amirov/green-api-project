@@ -75,8 +75,7 @@ const Chat = () => {
           newData.body.messageData
         ) {
           const newMessage = {
-            message:
-              newData.body.messageData.extendedTextMessageData.textMessage,
+            message: newData.body.messageData.extendedTextMessageData.text,
             fromMe: false,
             time: newData.body.timestamp,
           };
