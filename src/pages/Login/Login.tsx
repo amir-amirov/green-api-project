@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useApp } from "../../store/app";
 import { useNavigate } from "react-router-dom";
-import { palette } from "../../theme/palette";
 import { useSetSettingMutation } from "../../services/RTKQuery/endpoints";
 
 type FormData = {
@@ -20,7 +19,7 @@ const schema = z.object({
 });
 
 const Login = () => {
-  const { app, setApp } = useApp();
+  const { setApp } = useApp();
   const navigate = useNavigate();
 
   const [setSettings, { isLoading }] = useSetSettingMutation();
