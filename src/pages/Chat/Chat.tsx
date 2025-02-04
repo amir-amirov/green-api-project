@@ -71,7 +71,8 @@ const Chat = () => {
         console.log("data: ", newData);
         if (
           newData.body &&
-          newData.body.typeWebhook === "incomingMessageReceived"
+          newData.body.typeWebhook === "incomingMessageReceived" &&
+          newData.body.messageData
         ) {
           const newMessage = {
             message: newData.body.messageData.textMessageData.textMessage,
