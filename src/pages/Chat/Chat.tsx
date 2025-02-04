@@ -66,7 +66,7 @@ const Chat = () => {
     if (!app.id) return;
     try {
       console.log("Fetching...");
-      const { data: newData } = await refetch(); // Wait for refetch to complete and get the updated data
+      const { data: newData } = await refetch();
       if (newData) {
         console.log("data: ", newData);
         if (
@@ -92,7 +92,6 @@ const Chat = () => {
     } catch (err) {
       console.error("Error fetching / deleting notifications:", err);
     } finally {
-      // setTimeout(fetchNotifications, 1000);
       if (app.id) {
         timeoutRef.current = setTimeout(fetchNotifications, 1000);
       }
@@ -125,7 +124,6 @@ const Chat = () => {
         display: "flex",
         flexDirection: "column",
         backgroundImage: `url(${background})`,
-        // optional fallback color:
         backgroundColor: "#000",
         backgroundSize: "cover",
       }}
@@ -154,10 +152,10 @@ const Chat = () => {
       {/* Message list container */}
       <Box
         sx={{
-          flex: 1, // allow this to fill remaining space
+          flex: 1,
           display: "flex",
-          flexDirection: "column-reverse", // messages from bottom to top
-          overflowY: "auto", // scroll when messages overflow
+          flexDirection: "column-reverse",
+          overflowY: "auto",
           p: 2,
         }}
       >
